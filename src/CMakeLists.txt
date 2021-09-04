@@ -1,0 +1,55 @@
+add_subdirectory(util)
+add_subdirectory(nrrd)
+add_subdirectory(imgui)
+add_subdirectory(nativefiledialog)
+add_subdirectory(viewlayer)
+
+target_sources(${PROJECT_NAME} PRIVATE
+    align.cpp
+    align.hpp
+    application.hpp
+    application.cpp
+    cache.cpp
+    resource/Resource.hpp
+    resource/Resource.cpp
+    resource/NrrdResource.hpp
+    resource/NrrdResource.cpp
+    resource/OpenvdbResource.hpp
+    resource/OpenvdbResource.cpp
+    resource/MeshResource.hpp
+    resource/MeshResource.cpp
+    resource/DescriptorResource.hpp
+    resource/DescriptorResource.cpp
+    resource/TransformResource.hpp
+    resource/TransformResource.cpp
+    descriptor/GASDDescriptor.hpp
+    UISettings.hpp
+    Shader.hpp
+    Camera.hpp
+    ray.hpp
+    Triangle.hpp
+    Viewport.hpp
+    Window.hpp
+    Window.cpp
+    glfw_callbacks.hpp
+    glfw_callbacks.cpp
+    opengl_object/OpenGLObject.hpp
+    opengl_object/OpenGLObject.cpp
+    opengl_object/Mesh.hpp
+    opengl_object/Sphere.hpp
+    opengl_object/Line.hpp
+    scene_object/AreaPicker.hpp
+    scene_object/IntersectionPointObject.hpp
+    scene_object/LineObject.hpp
+    scene_object/MeshObject.hpp
+    scene_object/PointObject.hpp
+    scene_object/SceneObject.hpp
+    scene_object/SequenceLineObject.hpp
+    scene_object/Skull.hpp
+    scene_object/Skull.cpp
+    scene_object/SphereObject.hpp
+    tinyply.hpp
+    ICP.h
+    SoA.hpp
+    SoA.cpp
+)
