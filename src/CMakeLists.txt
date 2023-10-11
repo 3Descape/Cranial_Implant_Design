@@ -1,7 +1,4 @@
 add_subdirectory(util)
-add_subdirectory(nrrd)
-add_subdirectory(imgui)
-add_subdirectory(nativefiledialog)
 add_subdirectory(viewlayer)
 
 target_sources(${PROJECT_NAME} PRIVATE
@@ -50,6 +47,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     scene_object/SphereObject.hpp
     tinyply.hpp
     ICP.h
+    main.cpp
     SoA.hpp
     SoA.cpp
 )

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 #include "Window.hpp"
@@ -60,7 +60,7 @@ int Window::init(float initial_size)
     setSize(window_width, window_height);
     setMonitorSize(mode->width, mode->height);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (gladLoadGL(glfwGetProcAddress) == 0)
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;

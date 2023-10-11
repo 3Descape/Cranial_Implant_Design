@@ -1,0 +1,27 @@
+[submodule "vendor/openvdb"]
+	path = vendor/openvdb
+	url = https://github.com/AcademySoftwareFoundation/openvdb.git
+[submodule "vendor/imgui"]
+	path = vendor/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "vendor/glm"]
+	path = vendor/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "vendor/glfw"]
+	path = vendor/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "vendor/pcl"]
+	path = vendor/pcl
+	url = https://github.com/PointCloudLibrary/pcl.git
+[submodule "vendor/tinyply"]
+	path = vendor/tinyply
+	url = https://github.com/ddiakopoulos/tinyply.git
+[submodule "vendor/tbb"]
+	path = vendor/tbb
+	url = https://github.com/oneapi-src/oneTBB.git
+[submodule "vendor/glad"]
+	path = vendor/glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "vendor/blosc"]
+	path = vendor/blosc
+	url = https://github.com/Blosc/c-blosc.git

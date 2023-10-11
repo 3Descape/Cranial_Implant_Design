@@ -33,7 +33,7 @@ void viewlayer_draw_objects()
         const ImVec2 label_size = ImGui::CalcTextSize("##empty", NULL, true);
         const float square_size = ImGui::GetFrameHeight();
         const ImVec2 checkBox_size(square_size + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f);
-        const float width = ImGui::GetWindowContentRegionWidth();
+        const float width = ImGui::GetWindowContentRegionMax().x - ImGui::GetWindowContentRegionMin().x;
 
         for(int32_t i = 0; i < app.scene_objects.size(); ++i)
         {

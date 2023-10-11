@@ -1,6 +1,6 @@
 
 #include <intrin.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <glm/glm.hpp>
 
 #ifndef UTIL_OPENGL

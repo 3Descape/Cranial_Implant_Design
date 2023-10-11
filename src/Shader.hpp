@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <glm/glm.hpp>
 
 #include "util/util_opengl.hpp"

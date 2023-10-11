@@ -3,7 +3,7 @@
 #include <string>
 #include <cstdint>
 
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 #include "SoA.hpp"
 #include "Shader.hpp"
