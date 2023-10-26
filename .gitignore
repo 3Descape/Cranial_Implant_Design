@@ -2,3 +2,6 @@ data/*
 !data/application/
 bac/
 build/
+vendor/lib
+vendor/src
+vendor/build

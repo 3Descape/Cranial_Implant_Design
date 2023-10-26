@@ -1,0 +1,98 @@
+diff --git a/NRRD/nrrd.hxx b/NRRD/nrrd.hxx
+index 6e64fba..8f601b4 100644
+--- a/NRRD/nrrd.hxx
++++ b/NRRD/nrrd.hxx
+@@ -16,6 +16,10 @@
+ #include <sstream>
+ #include <iostream>
+ 
++#include <boost/iostreams/copy.hpp>
++#include <boost/iostreams/filter/gzip.hpp>
++#include <boost/iostreams/filtering_streambuf.hpp>
++
+ #ifdef NRRD
+ #undef NRRD
+ #endif
+@@ -242,8 +246,8 @@ namespace NRRD
+ 		int header_offset=parseHeader(file, *hdr_fields, hdr_keys);
+ 		if (header_offset<=0) return false;
+ 
+-		// Make sure the data is uncompressed
+-		if ((*hdr_fields)["encoding"]!="raw")
++		// Make sure the data is uncompressed or gzip
++		if ((*hdr_fields)["encoding"]!="raw"&&(*hdr_fields)["encoding"]!="gzip")
+ 		{
+ 			std::cerr << "NDDR::load<T>(...): File encoding not supported\n";
+ 			return false;
+@@ -352,13 +356,39 @@ namespace NRRD
+ 			// Read data after first blank line
+ 			std::ifstream raw(data_file.c_str(),std::ios::binary);
+ 			raw.seekg(header_offset,std::ios::beg);
+-			raw.read((char*)*data,n*sizeof(T));
+-			int nbytes=(int)(n*sizeof(T)-raw.gcount());
+-			if (!raw || nbytes)
++
++            if((*hdr_fields)["encoding"]=="gzip")
+ 			{
+-				std::cerr << "NDDR::load<T>(...): Failed to read complete image chunk. (" << nbytes << ")\n";
+-				return false;
++				namespace bio = boost::iostreams;
++
++				std::stringstream compressed;
++				compressed << raw.rdbuf();
++				std::stringstream decompressed;
++
++				bio::filtering_streambuf<bio::input> out;
++				out.push(bio::gzip_decompressor());
++				out.push(compressed);
++				bio::copy(out, decompressed);
++
++				int nbytes=(int)(n*sizeof(T)-decompressed.str().length());
++				if (nbytes)
++                {
++					std::cerr << "NDDR::load<T>(...): Failed to read complete image chunk. (" << nbytes << ")\n";
++					return false;
++				}
++				decompressed.str().copy((char*)*data, n*sizeof(T));
+ 			}
++			else
++			{
++                raw.read((char*)*data,n*sizeof(T));
++                int nbytes=(int)(n*sizeof(T)-raw.gcount());
++                if (!raw || nbytes)
++                {
++                    std::cerr << "NDDR::load<T>(...): Failed to read complete image chunk. (" << nbytes << ")\n";
++                    return false;
++                }
++			}
++
+ 			// Convert endian if we have to.
+ 			if (endian_file!=endian_machine)
+ 				#pragma omp parallel for
+diff --git a/NRRD/nrrd_image.hxx b/NRRD/nrrd_image.hxx
+index 24ce368..5010588 100644
+--- a/NRRD/nrrd_image.hxx
++++ b/NRRD/nrrd_image.hxx
+@@ -36,6 +36,22 @@ namespace NRRD
+ 		/// A n-D image of specific size. Optionally wraps an existing data pointer.
+         Image(int size[], int n, T* dt=0x0) : ImageView<T>(), alloc(0) { set(size,n,dt); }
+ 
++        // Move assignment operator
++        Image& operator=(Image&& other)
++		{
++			int n=other.dimension();
++			std::vector<int> dims(n);
++			for (int i=0; i<n; i++) dims[i]=other.size(i);
++			T* data=other.passOwnership();
++			set(&dims[0],n,nullptr);
++			takeOwnership(data);
++			nrrd_header=other.nrrd_header;
++			other.nrrd_header.clear();
++			meta_info=other.meta_info;
++			other.meta_info.clear();
++			return *this;
++		}
++
+ 		/// Clone an existing image.
+ 		void clone(const NRRD::ImageView<T>& other)
+ 		{

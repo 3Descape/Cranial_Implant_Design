@@ -36,7 +36,7 @@ if (WIN32)
   set(USE_PKGCONFIG FALSE)
 endif()
 
-set(CID_DEPENDENCIES_DIRECTORY "" CACHE PATH "The directory containing the libraries.")
+set(CID_DEPENDENCIES_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/vendor/lib" CACHE PATH "The directory containing the libraries.")
 set(OPENVDB_ROOT ${CID_DEPENDENCIES_DIRECTORY}/openvdb CACHE PATH "Path to openvdb directory.")
 set(TBB_ROOT ${CID_DEPENDENCIES_DIRECTORY}/onetbb CACHE PATH "Path to tbb directory.")
 set(BLOSC_ROOT ${CID_DEPENDENCIES_DIRECTORY}/blosc CACHE PATH "Path to blosc directory.")
@@ -51,9 +51,10 @@ set(NFD_ROOT ${CID_DEPENDENCIES_DIRECTORY}/nfd CACHE PATH "Path to ndf directory
 set(LZ4_ROOT ${CID_DEPENDENCIES_DIRECTORY}/lz4 CACHE PATH "Path to lz4 directory.")
 set(IMGUI_ROOT ${CID_DEPENDENCIES_DIRECTORY}/imgui CACHE PATH "Path to imgui directory.")
 set(NRRD_ROOT ${CID_DEPENDENCIES_DIRECTORY}/nrrd CACHE PATH "Path to nrrd directory.")
+set(FLANN_ROOT ${CID_DEPENDENCIES_DIRECTORY}/flann CACHE PATH "Path to flann directory.")
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${OPENVDB_ROOT}/lib/cmake/OpenVDB)
+list(APPEND CMAKE_MODULE_PATH ${CID_DEPENDENCIES_DIRECTORY})
 
 find_package(Boost REQUIRED)
 find_package(TBB REQUIRED)
@@ -66,9 +67,9 @@ find_package(PCL REQUIRED)
 find_package(TINYPLY REQUIRED)
 find_package(GLAD REQUIRED)
 find_package(NFD REQUIRED)
-find_package(LZ4 REQUIRED)
 find_package(imgui REQUIRED)
 find_package(NRRD REQUIRED)
+find_package(LZ4 REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     src
@@ -89,10 +90,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     TBB::tbb
     ${PCL_LIBRARIES}
     Eigen3::Eigen
+    LZ4::lz4_shared
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
     ${PCL_LIBRARY_DIRS}
+    ${LZ4_ROOT}/lib
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -146,3 +149,5 @@ add_custom_target(copy-runtime-files ALL
     "${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/shaders"
     COMMAND ${CMAKE_COMMAND} -E copy "$<IF:$<CONFIG:Debug>,${CID_RUNTIME_DEPENTENCIES_DEBUG},${CID_RUNTIME_DEPENTENCIES_RELEASE}>" ${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release> COMMAND_EXPAND_LISTS
 )
+
+add_dependencies(${PROJECT_NAME} copy-runtime-files)
