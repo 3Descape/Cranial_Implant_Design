@@ -1,6 +1,6 @@
 set LIB_PATH=%CD%/lib
 set SRC_PATH=%CD%/src
-set CMAKE_OPTIONS=-DCMAKE_DEBUG_POSTFIX=_debug -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=FALSE -DCMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH=FALSE
+set CMAKE_OPTIONS=-DCMAKE_DEBUG_POSTFIX=_debug -DCMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH=FALSE -DCMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH=FALSE -DCMAKE_POLICY_DEFAULT_CMP0144=NEW
 
 IF NOT EXIST %SRC_PATH% mkdir %SRC_PATH%
 git -C %SRC_PATH%/blosc pull || git clone https://github.com/Blosc/c-blosc.git %SRC_PATH%/blosc
@@ -16,8 +16,8 @@ git -C %SRC_PATH%/nrrd pull || git clone https://git.code.sf.net/p/nrrd-cpp/code
 git -C %SRC_PATH%/nfd pull || git clone https://github.com/btzy/nativefiledialog-extended.git %SRC_PATH%/nfd
 git -C %SRC_PATH%/onetbb pull || git clone https://github.com/oneapi-src/oneTBB.git %SRC_PATH%/onetbb
 git -C %SRC_PATH%/openvdb pull || git clone https://github.com/AcademySoftwareFoundation/openvdb.git %SRC_PATH%/openvdb
-git -C %SRC_PATH%/pcl pull || git clone https://github.com/PointCloudLibrary/pcl.git %SRC_PATH%/pcl
-git -C %SRC_PATH%/tinyply pull || git clone https://github.com/3Descape/tinyply.git %SRC_PATH%/tinyply
+git -C %SRC_PATH%/pcl pull || git clone https://github.com/3Descape/pcl.git %SRC_PATH%/pcl
+git -C %SRC_PATH%/tinyply pull || git clone https://github.com/ddiakopoulos/tinyply.git %SRC_PATH%/tinyply
 git -C %SRC_PATH%/vtk pull || git clone https://github.com/Kitware/VTK.git %SRC_PATH%/vtk
 git -C %SRC_PATH%/zlib pull || git clone https://github.com/madler/zlib.git %SRC_PATH%/zlib
 
@@ -39,7 +39,7 @@ cmake --install ./build/zlib --config Debug
 cmake --build ./build/zlib --config Release -j
 cmake --install ./build/zlib --config Release
 
-cmake -B ./build/openvdb -S %SRC_PATH%/openvdb %CMAKE_OPTIONS% --fresh -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/openvdb -DUSE_EXPLICIT_INSTANTIATION=OFF -DTBB_ROOT=%LIB_PATH%/onetbb -DBLOSC_ROOT=%LIB_PATH%/blosc -DBLOSC_DEBUG_SUFFIX="_debug" -DZLIB_ROOT=%LIB_PATH%/zlib -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_POLICY_DEFAULT_CMP0144=NEW
+cmake -B ./build/openvdb -S %SRC_PATH%/openvdb %CMAKE_OPTIONS% --fresh -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/openvdb -DUSE_EXPLICIT_INSTANTIATION=OFF -DTBB_ROOT=%LIB_PATH%/onetbb -DBLOSC_ROOT=%LIB_PATH%/blosc -DBLOSC_DEBUG_SUFFIX="_debug" -DZLIB_ROOT=%LIB_PATH%/zlib -DOPENVDB_BUILD_BINARIES=OFF
 cmake --build ./build/openvdb --config Debug -j
 cmake --install ./build/openvdb --config Debug
 cmake --build ./build/openvdb --config Release -j
@@ -75,23 +75,23 @@ cmake --install ./build/lz4 --config Debug
 cmake --build ./build/lz4 --config Release -j
 cmake --install ./build/lz4 --config Release
 
-cmake -B ./build/flann -S %SRC_PATH%/flann %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/flann -DCMAKE_BUILD_STATIC_LIBS=ON -DBUILD_C_BINDINGS=OFF -DBUILD_DOC=OFF -DBUILD_EXAMPLES=OFF -DBUILD_MATLAB_BINDINGS=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DLZ4_ROOT=%LIB_PATH%/lz4 -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
+cmake -B ./build/flann -S %SRC_PATH%/flann %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/flann -DLZ4_ROOT=%LIB_PATH%/lz4 -DCMAKE_BUILD_STATIC_LIBS=ON -DBUILD_C_BINDINGS=OFF -DBUILD_DOC=OFF -DBUILD_EXAMPLES=OFF -DBUILD_MATLAB_BINDINGS=OFF -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_TESTS=OFF -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
 cmake --build ./build/flann --config Debug -j
 cmake --install ./build/flann --config Debug
 cmake --build ./build/flann --config Release -j
 cmake --install ./build/flann --config Release
+
+cmake -B ./build/pcl -S %SRC_PATH%/pcl %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/pcl -DFLANN_ROOT=%LIB_PATH%/flann -DZLIB_ROOT=%LIB_PATH%/zlib -DWITH_CUDA=OFF -DLZ4_ROOT=%LIB_PATH%/lz4 -DBUILD_ml=OFF -DBUILD_segmentation=OFF -DBUILD_stereo=OFF -DBUILD_tools=OFF -DBUILD_tracking=OFF -DWITH_OPENGL=OFF -DWITH_VTK=OFF -DPCL_ONLY_CORE_POINT_TYPES=OFF
+cmake --build ./build/pcl --config Debug -j
+cmake --install ./build/pcl --config Debug
+cmake --build ./build/pcl --config Release -j
+cmake --install ./build/pcl --config Release
 
 cmake -B ./build/eigen -S %SRC_PATH%/eigen %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/eigen -DEIGEN_BUILD_DOC=OFF -DEIGEN_BUILD_TESTING=OFF -DBUILD_TESTING=OFF
 cmake --build ./build/eigen --config Debug -j
 cmake --install ./build/eigen --config Debug
 cmake --build ./build/eigen --config Release -j
 cmake --install ./build/eigen --config Release
-
-cmake -B ./build/pcl -S %SRC_PATH%/pcl %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/pcl -DWITH_CUDA=OFF -DFLANN_ROOT=%LIB_PATH%/flann -DZLIB_ROOT=%LIB_PATH%/zlib -DLZ4_ROOT=%LIB_PATH%/lz4 -D_WIN32_WINNT=0x0A00 -DBUILD_ml=OFF -DBUILD_segmentation=OFF -DBUILD_stereo=OFF -DBUILD_tools=OFF -DBUILD_tracking=OFF -DWITH_OPENGL=OFF -DWITH_VTK=OFF
-cmake --build ./build/pcl --config Debug -j
-cmake --install ./build/pcl --config Debug
-cmake --build ./build/pcl --config Release -j
-cmake --install ./build/pcl --config Release
 
 cmake -B ./build/nfd -S %SRC_PATH%/nfd %CMAKE_OPTIONS% -DCMAKE_INSTALL_PREFIX=%LIB_PATH%/nfd -DNFD_BUILD_TESTS=OFF
 cmake --build ./build/nfd --config Debug -j
