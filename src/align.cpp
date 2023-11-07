@@ -17,8 +17,6 @@
 #include "scene_object/PointObject.hpp"
 #include "scene_object/LineObject.hpp"
 #include "scene_object/SequenceLineObject.hpp"
-#include "resource/MeshResource.hpp"
-#include "resource/NrrdResource.hpp"
 #include "UISettings.hpp"
 #include "util/util_opengl.hpp"
 #include "util/util_timer.hpp"
