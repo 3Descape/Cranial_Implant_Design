@@ -2,7 +2,7 @@
 #include <type_traits>
 
 #include <boost/filesystem.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifndef RESOURCE_H
 #define RESOURCE_H
@@ -18,7 +18,7 @@ class Resource
 
         Resource(const boost::filesystem::path& file_path) : file_path_(file_path) {}
 
-        static int setDataRootDirectory(const boost::filesystem::path& root_path);
+        static int setDataRootDirectory(std::optional<std::string> new_path = {});
         static boost::filesystem::path getDataRootDirectory();
         static int setCacheRootDirectory(const boost::filesystem::path& cache_root_dir);
         static boost::filesystem::path getCacheRootDirectory() { return cache_root_dir_ ? *cache_root_dir_ : getDataRootDirectory(); }
@@ -32,8 +32,8 @@ class Resource
         boost::filesystem::path getRelativeFilePath() const { return file_path_; }
 
     protected:
-        static boost::optional<boost::filesystem::path> data_root_dir_;
-        static boost::optional<boost::filesystem::path> cache_root_dir_;
+        static std::optional<boost::filesystem::path> data_root_dir_;
+        static std::optional<boost::filesystem::path> cache_root_dir_;
         static boost::filesystem::path cache_prefix_dir_;
 
         boost::filesystem::path file_path_;

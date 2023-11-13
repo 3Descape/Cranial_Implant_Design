@@ -13,6 +13,21 @@ void viewlayer_draw_objects()
 {
     ImGui::Begin("Objects", NULL);
 
+    char data_dir_path[200] = {0};
+    if(!Resource::getDataRootDirectory().empty()) {
+        std::strcpy(data_dir_path, Resource::getDataRootDirectory().string().c_str());
+    }
+    if(ImGui::InputText("##empty", data_dir_path, IM_ARRAYSIZE(data_dir_path))) {
+        Resource::setDataRootDirectory(std::string(data_dir_path));
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Data Root Directory")) {
+        boost::filesystem::path new_path;
+        if(ui_file_dialog_folder_select(new_path, Resource::getDataRootDirectory().string()) == NFD_OKAY) {
+            Resource::setDataRootDirectory(new_path.string());
+        }
+    }
+
     ImGuiIO& io = ImGui::GetIO();
     ImGuiStyle& style = ImGui::GetStyle();
     static float select_size = 150.0f;

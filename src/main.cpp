@@ -9,13 +9,16 @@ int main(int argc, char const *argv[])
 {
     openvdb::initialize();
 
-    if(Resource::setDataRootDirectory("C:\\Users\\micla\\Desktop\\c++\\data"))
+    if(Resource::setDataRootDirectory())
         return -1;
+
+    std::cout << "Data root directory set to " << Resource::getDataRootDirectory().string() << std::endl;
 
     if(app.init())
         return -1;
 
-    cache();
+    if(!Resource::getDataRootDirectory().empty())
+        cache();
 
     app.run();
 

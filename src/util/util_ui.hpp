@@ -88,6 +88,29 @@ inline int ui_file_dialog_save(boost::filesystem::path& output_path, const std::
     return NFD_OKAY;
 }
 
+inline int ui_file_dialog_folder_select(boost::filesystem::path& output_path, const std::string& default_path)
+{
+    nfdchar_t* path = NULL;
+    nfdresult_t result = NFD_PickFolder(&path, default_path.empty() ? nullptr : default_path.c_str());
+
+    if (result == NFD_CANCEL)
+    {
+        std::cout << "NFD: User pressed cancel." << std::endl;
+        return NFD_CANCEL;
+    }
+    else if(result == NFD_ERROR)
+    {
+        std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+        return NFD_ERROR;
+    }
+
+    std::cout << "Path: " << path << std::endl;
+    output_path = boost::filesystem::path(path);
+    NFD_FreePath(path);
+
+    return NFD_OKAY;
+}
+
 namespace ImGui {
     inline bool ResizeHandle(const char* label, float* size, ImVec2 handle_size = ImVec2(-FLT_MIN, 3)) {
         ImGui::PushID(label);
