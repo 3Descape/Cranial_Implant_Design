@@ -30,7 +30,7 @@ class IntersectionPointObject : public SceneObject
 
         static void createInstance()
         {
-            boost::filesystem::path file = Resource::getDataRootDirectory() / boost::filesystem::path("application/intersection.ply");
+            boost::filesystem::path file = boost::filesystem::path("./application/intersection.ply");
 
             std::vector<float> data;
             std::vector<glm::uvec3> triangles;

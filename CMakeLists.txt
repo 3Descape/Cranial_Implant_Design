@@ -151,6 +151,9 @@ add_custom_target(copy-runtime-files ALL
     COMMAND ${CMAKE_COMMAND}
     -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/src/shaders"
     "${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/shaders"
+    COMMAND ${CMAKE_COMMAND}
+    -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/data/application"
+    "${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release>/application"
     COMMAND ${CMAKE_COMMAND} -E copy "$<IF:$<CONFIG:Debug>,${CID_RUNTIME_DEPENTENCIES_DEBUG},${CID_RUNTIME_DEPENTENCIES_RELEASE}>" ${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<CONFIG:Debug>,Debug,Release> COMMAND_EXPAND_LISTS
 )
 

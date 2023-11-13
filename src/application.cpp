@@ -84,8 +84,6 @@ int Application::init()
 
     IntersectionPointObject::createInstance();
 
-    std::cout << Resource::getDataRootDirectory().string() << std::endl;
-
     return 0;
 }
 
