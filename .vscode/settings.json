@@ -141,7 +141,8 @@
         "source_location": "cpp",
         "syncstream": "cpp",
         "*.in": "cpp",
-        "*.txx": "cpp"
+        "*.txx": "cpp",
+        "*.inc": "cpp"
     },
     "git.ignoreLimitWarning": true,
     "C_Cpp.intelliSenseEngineFallback": "disabled"

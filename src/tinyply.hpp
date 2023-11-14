@@ -94,7 +94,7 @@ inline void write_ply(const std::string& filename, const std::vector<glm::uvec3>
 
 inline int read_ply(const std::string& filepath, std::vector<glm::vec3>* points_out, std::vector<glm::uvec3>* triangles_out, const bool preload_into_memory = true)
 {
-    std::cout << "........................................................................\n";
+    std::cout << "..................TINYPLY.................................\n";
     std::cout << "Now Reading: " << filepath << std::endl;
 
     std::unique_ptr<std::istream> file_stream;
@@ -158,7 +158,7 @@ inline int read_ply(const std::string& filepath, std::vector<glm::vec3>* points_
 
 inline void read_blender_ply(const std::string& filepath, std::vector<glm::vec3>& points_out, std::vector<glm::uvec3>& indices_out, std::vector<glm::vec4>& colors_out, std::vector<glm::vec3>& normals_out, const bool preload_into_memory = true)
 {
-    std::cout << "........................................................................\n";
+    std::cout << "..................TINYPLY.................................\n";
     std::cout << "Now Reading: " << filepath << std::endl;
 
     std::unique_ptr<std::istream> file_stream;

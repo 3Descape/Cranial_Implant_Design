@@ -1,3 +1,4 @@
+add_subdirectory(logger)
 add_subdirectory(util)
 add_subdirectory(viewlayer)
 

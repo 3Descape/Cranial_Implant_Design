@@ -1,9 +1,14 @@
 #include <openvdb/openvdb.h>
+#include <memory>
 
-#include "Application.hpp"
+#include "application.hpp"
+#include "logger/logger.hpp"
+#include "logger/stdout_logger.hpp"
 #include "resource/Resource.hpp"
 
 int cache();
+
+std::shared_ptr<LoggerInterface> logger = std::make_shared<StdoutLogger>();
 
 int main(int argc, char const *argv[])
 {
@@ -12,7 +17,7 @@ int main(int argc, char const *argv[])
     if(Resource::setDataRootDirectory())
         return -1;
 
-    std::cout << "Data root directory set to " << Resource::getDataRootDirectory().string() << std::endl;
+    LOG_INFO("Data root directory set to {}", Resource::getDataRootDirectory().string());
 
     if(app.init())
         return -1;
