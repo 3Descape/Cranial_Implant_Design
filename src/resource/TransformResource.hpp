@@ -15,7 +15,7 @@ class TransformResource : public ResourceCRTP<TransformResource>
         static boost::filesystem::path getPrefixDirectory();
 
         int write(const openvdb::Vec3d& transformation);
-        openvdb::Vec3d TransformResource::read();
+        openvdb::Vec3d read();
 };
 
 #endif

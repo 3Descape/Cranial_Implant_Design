@@ -15,7 +15,7 @@
 #include <openvdb/tools/ValueTransformer.h>
 #include <openvdb/tools/GridTransformer.h>
 
-#include "Application.hpp"
+#include "application.hpp"
 #include "glfw_callbacks.hpp"
 #include "viewlayer/viewlayer.hpp"
 #include "resource/NrrdResource.hpp"

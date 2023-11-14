@@ -542,7 +542,7 @@ void viewlayer_draw_vdb()
                 if(start >= sources.size()) continue;
                 int end = (start + grids_per_thread) - 1;
                 if(end >= sources.size()) end = sources.size() - 1;
-                threads.emplace_back(grid_load_batch_range, sources, start, end, grids);
+                threads.emplace_back(grid_load_batch_range, std::cref(sources), start, end, std::ref(grids));
             }
 
             for(auto& thread : threads)

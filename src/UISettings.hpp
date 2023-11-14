@@ -16,7 +16,7 @@ typedef struct ICPType
     ICPType(const Type& type) : value(type) {};
 
     inline static Type elements[] = { LLS, LLS_CLIPPED_SELECTION, LLS_CLIPPED_AREAPICKER };
-    inline static char* labels[] = { "None", "User Selection + Region Picker", "Region Picker" };
+    inline static const char* labels[] = { "None", "User Selection + Region Picker", "Region Picker" };
 
     ICPType& operator=(const ICPType& other)
     {
@@ -45,12 +45,12 @@ typedef struct ICPType
         return value != rhs;
     }
 
-    static char* getLabel(const Type type)
+    static const char* getLabel(const Type type)
     {
         return labels[type];
     }
 
-    char* getLabel()
+    const char* getLabel()
     {
         return labels[value];
     }

@@ -123,7 +123,7 @@ void openvdb_extract_active_voxel_positions(const GridType& grid, std::vector<gl
     openvdb::Vec3d ptn;
     size_t point_count = 0;
     out_points.resize(grid.activeVoxelCount());
-    for(GridType::TreeType::ValueOnCIter iter = grid.tree().cbeginValueOn(); iter; ++iter, ++point_count)
+    for(typename GridType::TreeType::ValueOnCIter iter = grid.tree().cbeginValueOn(); iter; ++iter, ++point_count)
     {
         if(!iter.isVoxelValue()) continue;
 
