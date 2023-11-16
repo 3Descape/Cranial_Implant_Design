@@ -5,10 +5,12 @@
 #include "Resource.hpp"
 #include "MeshResource.hpp"
 #include "util/util_timer.hpp"
+#include "logger/logger.hpp"
+#include "assert.hpp"
+
 class NrrdResource;
 
-#ifndef DESCRIPTOR_RESOURCE_H
-#define DESCRIPTOR_RESOURCE_H
+#pragma once
 
 class DescriptorResource : public ResourceCRTP<DescriptorResource>
 {
@@ -40,7 +42,7 @@ int DescriptorResource::cache(const std::vector<glm::vec3>& points, const std::v
     if(int code = createDirectoryIfNecessary(file_path.parent_path())) return code;
 
     Timer timer;
-    std::cout << "Start caching descriptor file \"" << file_path.string() << "\"" << std::endl;
+    LOG_INFO("Start caching descriptor file {}", file_path.string());
 
     Descriptor_T descriptor;
     if(int code = computeDescriptor(descriptor, points, normals)) return code;
@@ -52,7 +54,7 @@ int DescriptorResource::cache(const std::vector<glm::vec3>& points, const std::v
     out_file.write((char*)descriptor.data(), Descriptor_T::size);
     out_file.close();
 
-    std::cout << "Cached descriptor file \"" << file_path.string() << "\" in " << timer.stop().toString() << std::endl;
+    LOG_INFO("Cached descriptor file {} in {}", file_path.string(), timer.stop().toString());
 
     return 0;
 }
@@ -73,12 +75,12 @@ int DescriptorResource::load(Descriptor_T& descriptor) const
 
     std::streampos size = in_file.tellg();
     in_file.seekg(0, std::ios::beg);
-    assert(Descriptor_T::size == size);
+    ASSERT(Descriptor_T::size == size);
     in_file.read((char*)descriptor.data(), Descriptor_T::size);
     in_file.close();
 
     timer.stop();
-    std::cout << "Reading descriptor \"" << file_path.string() << "\" took " << timer.toString() << "." << std::endl;
+    LOG_INFO("Reading descriptor {} took {}.", file_path.string(), timer.toString());
 
     return 0;
 }
@@ -105,11 +107,11 @@ template<typename Descriptor_T>
 int DescriptorResource::findMatches(const Descriptor_T& descriptor, uint32_t count, std::vector<MeshResource>& matches)
 {
     std::vector<std::pair<double, DescriptorResource>> distances;
-    for(boost::filesystem::recursive_directory_iterator itr(DescriptorResource::getRootDirectory()); itr != boost::filesystem::recursive_directory_iterator{}; ++itr)
-    {
+    for(boost::filesystem::recursive_directory_iterator itr(DescriptorResource::getRootDirectory()); itr != boost::filesystem::recursive_directory_iterator{}; ++itr) {
         // skip directories itself
-        if(!boost::filesystem::is_regular_file(itr->path()) || boost::filesystem::extension(itr->path()) != getFileExtension())
+        if(!boost::filesystem::is_regular_file(itr->path()) || boost::filesystem::extension(itr->path()) != getFileExtension()) {
             continue;
+        }
 
         DescriptorResource descriptor_resource(boost::filesystem::relative(itr->path(), getRootDirectory() / Descriptor_T::name));
         Descriptor_T source_descriptor;
@@ -121,13 +123,14 @@ int DescriptorResource::findMatches(const Descriptor_T& descriptor, uint32_t cou
 
     std::sort(distances.begin(), distances.end(), sortByOperator<double, DescriptorResource>);
 
-    for(auto& pair : distances)
-        std::cout << pair.first << ": " << pair.second.getAbsoluteFilePath().string() << std::endl;
+    for(auto& pair : distances) {
+        LOG_INFO("{}: ", pair.first, pair.second.getAbsoluteFilePath().string());
+    }
 
     matches.reserve(count);
-    for(uint32_t i = 0; i < count; ++i)
+    for(uint32_t i = 0; i < count; ++i) {
         matches.push_back(MeshResource(distances[i].second));
+    }
 
     return 0;
 }
-#endif

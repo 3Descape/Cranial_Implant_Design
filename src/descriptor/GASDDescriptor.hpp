@@ -2,8 +2,9 @@
 #include <pcl/point_types.h>
 #include <pcl/features/gasd.h>
 
-#ifndef GASDDESCRIPTOR_H
-#define GASDDESCRIPTOR_H
+#include "assert.hpp"
+
+#pragma once
 class GASDDescriptor
 {
     private:
@@ -26,7 +27,7 @@ class GASDDescriptor
             pcl::PointCloud<pcl::GASDSignature512> gasd_descriptor;
             gasd.compute(gasd_descriptor);
 
-            assert(sizeof(gasd_descriptor[0].histogram) == sizeof(descriptor_));
+            ASSERT(sizeof(gasd_descriptor[0].histogram) == sizeof(descriptor_));
             memcpy(descriptor_, gasd_descriptor[0].histogram, sizeof(descriptor_));
 
             return 0;
@@ -45,4 +46,3 @@ class GASDDescriptor
             return distance;
         }
 };
-#endif

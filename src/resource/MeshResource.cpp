@@ -15,6 +15,7 @@
 #include "tinyply.hpp"
 #include "util/util_mesh.hpp"
 #include "util/util_timer.hpp"
+#include "logger/logger.hpp"
 
 MeshResource::Type MeshResource::type_ = MeshResource::CACHED;
 
@@ -45,7 +46,7 @@ int MeshResource::cache(const openvdb::FloatGrid::Ptr* input_openvdb_grid, bool 
     if(!force_cache && exists())
         return 0;
 
-    std::cout << "Start caching mesh file \"" << getAbsoluteFilePath().string() << "\"" << std::endl;
+    LOG_INFO("Start caching mesh file {}", getAbsoluteFilePath().string());
     Timer timer;
 
     openvdb::FloatGrid::Ptr temporary_openvdb_grid = nullptr;
@@ -65,8 +66,8 @@ int MeshResource::cache(const openvdb::FloatGrid::Ptr* input_openvdb_grid, bool 
     if(int code = createDirectoryIfNecessary(file_path.parent_path())) return code;
     write_ply(file_path.string(), mesh_indices, mesh_points);
 
-    std::cout << "Wrote cached mesh to \"" << getAbsoluteFilePath().string() << "\"" << std::endl;
-    std::cout << "Generating mesh took " << timer.stop().toString() << std::endl;
+    LOG_INFO("Wrote cached mesh to {}", getAbsoluteFilePath().string());
+    LOG_INFO("Generating mesh took {}", timer.stop().toString());
 
     DescriptorResource describtor_resource(*this);
     std::vector<glm::vec3> mesh_normals;
@@ -90,7 +91,7 @@ int MeshResource::load(std::vector<glm::vec3>* points_out, std::vector<glm::uvec
     if(!exists()) return -1;
     if(int code = read_ply(getAbsoluteFilePath().string(), points_out, triangles_out)) return code;
 
-    std::cout << "Reading mesh \"" << getAbsoluteFilePath().string() << "\" took " << timer.stop().toString() << "." << std::endl;
+    LOG_INFO("Reading mesh {} took {}", getAbsoluteFilePath().string(), timer.stop().toString());
 
     return 0;
 }

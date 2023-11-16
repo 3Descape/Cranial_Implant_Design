@@ -1,4 +1,3 @@
-#include <iostream>
 #include <boost/filesystem.hpp>
 
 #include <openvdb/tools/Composite.h>
@@ -28,6 +27,8 @@
 #include "util/util_timer.hpp"
 #include "tinyply.hpp"
 #include "ray.hpp"
+#include "assert.hpp"
+#include "logger/logger.hpp"
 
 #include "grid_operator.hpp"
 #include "grid_operator_filter.hpp"
@@ -79,7 +80,7 @@ PointObject* createVoxelVisualizationWithData(const openvdb::FloatGrid::Ptr grid
         { { "position", sizeof(points[0]), points.size() }, SoA_Memcpy_Descriptor::ARRAY,  (void*)points.data() },
         { { "probability", sizeof(values[0]), values.size() }, SoA_Memcpy_Descriptor::ARRAY, (void*)values.data() },
     };
-    assert(SoA_get_size_bytes(soa_descriptor) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(soa_descriptor) % sizeof(float) == 0, "Remainder was not 0.");
     std::vector<float> data;
     data.resize(SoA_get_size_bytes(soa_descriptor) / sizeof(float));
     SoA_memcpy(data.data(), soa_descriptor);
@@ -194,7 +195,7 @@ LineObject* createGridNormalsVisualization(const openvdb::FloatGrid::Ptr grid, c
         normals[normal_count].z = static_cast<float>(normal[2]);
     }
 
-    assert(points.size() == normals.size() && "Expected points and normals to have same size.");
+    ASSERT_MSG_DEBUG(points.size() == normals.size(), "Expected points and normals to have same size.");
 
     std::vector<glm::vec3> data;
     std::vector<glm::uvec2> indices;
@@ -265,7 +266,7 @@ void loadTargetGrid(openvdb::FloatGrid::Ptr& target_grid) {
     MeshResource mesh_resource(scene_object->getName());
     OpenvdbResource vdb_resource(mesh_resource);
     load_grid_and_apply_transformation(vdb_resource, scene_object->getActiveTransformation(), target_grid);
-    std::cout << "Target grid is now loaded." << std::endl;
+    LOG_INFO("Target grid is now loaded.");
 }
 
 void viewlayer_draw_vdb()
@@ -485,7 +486,7 @@ void viewlayer_draw_vdb()
         // } else if(selected_operator_type == GridOperator_Border) {
         //     grid_operator = new GridOperatorBorder();
         } else {
-            std::cout << "Unsupported operator type" << std::endl;
+            LOG_ERROR("Unsupported operator type.");
             exit(-1);
         }
         grid_operators.push_back(grid_operator);
@@ -509,7 +510,7 @@ void viewlayer_draw_vdb()
             boost::filesystem::path default_path = Resource::getDataRootDirectory() / "export";
             if(!boost::filesystem::exists(default_path)) {
                 if(!boost::filesystem::create_directories(default_path)) {
-                    std::cout << "Error creating directories: \"" << default_path.string() << "\"" << std::endl;
+                    LOG_WARN("Failed creating directories: {}", default_path.string());
                 }
             }
             boost::filesystem::path path;
@@ -548,10 +549,10 @@ void viewlayer_draw_vdb()
             for(auto& thread : threads)
                 thread.join();
 
-            std::cout << "Load All Grids: " << timer.stop().toString() << std::endl;
+            LOG_INFO("Load All Grids took {}", timer.stop().toString());
         }
         else {
-            std::cout << "Finished: No input grids given." << std::endl;
+            LOG_INFO("Finished executing: No input grids given.");
         }
     }
 
@@ -597,7 +598,7 @@ void viewlayer_draw_vdb()
 
         probability_grid->tree().prune();
 
-        std::cout << "Combine grids: " << timer.stop().toString() << std::endl;
+        LOG_INFO("Combine grids took {}", timer.stop().toString());
     }
 
     if(exec_postprocess_grid) {
@@ -621,7 +622,7 @@ void viewlayer_draw_vdb()
             }
         }
 
-        std::cout << "Grid Postprocessing: " << timer.stop().toString() << std::endl;
+        LOG_INFO("Grid Postprocessing took: ", timer.stop().toString());
 
         // Meshing
         timer.start();
@@ -664,9 +665,9 @@ void viewlayer_draw_vdb()
             app.addSceneObject(mesh_object);
         }
 
-        std::cout << "Meshing took: " << timer.stop().toString() << std::endl;
+        LOG_INFO("Meshing took: {}", timer.stop().toString());
     }
 
     if(exec_load_grids || exec_combine_grids || exec_postprocess_grid)
-        std::cout << "Pipline took " << timer_total_pipeline.stop().toString() << std::endl;
+        LOG_INFO("Pipline took {}", timer_total_pipeline.stop().toString());
 }

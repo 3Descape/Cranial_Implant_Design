@@ -1,7 +1,9 @@
-#include "grid_operator_level_set_filter.hpp"
 #include <imgui/imgui.h>
 #include <openvdb/openvdb.h>
 #include <openvdb/tools/LevelSetFilter.h>
+
+#include "logger/logger.hpp"
+#include "grid_operator_level_set_filter.hpp"
 
 GridOperatorLevelSetFilter::GridOperatorLevelSetFilter()
     : GridOperator(GridOperator_LevelSetFilter) {}
@@ -26,7 +28,7 @@ void GridOperatorLevelSetFilter::execute() {
         else if(level_set_filter_type == LevelSetFilterType_MeanCurvature)
             filter.meanCurvature();
         else {
-            std::cout << "GridOperator LevelSetFilter unsupported type" << std::endl;
+            LOG_ERROR("GridOperator LevelSetFilter unsupported type.");
             exit(-1);
         }
         out_grids.push_back(out_grid);

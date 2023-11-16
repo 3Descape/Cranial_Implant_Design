@@ -1,5 +1,8 @@
 #include "NrrdResource.hpp"
 #include "OpenvdbResource.hpp"
+#include "logger/logger.hpp"
+#include "util/util_timer.hpp"
+#include "assert.hpp"
 
 NrrdResource::Type NrrdResource::type_ = NrrdResource::DATA;
 
@@ -23,19 +26,17 @@ boost::filesystem::path NrrdResource::getPrefixDirectory()
 
 int NrrdResource::load(NRRD::Image<float>& destination) const
 {
-    auto nrrd_file = getAbsoluteFilePath();
-    auto start = std::chrono::steady_clock::now();
-    std::cout << "Start loading nrrd file " << nrrd_file.string() << std::endl;
-    assert(nrrd_file.extension() == getFileExtension());
+    boost::filesystem::path nrrd_file = getAbsoluteFilePath();
+    Timer timer;
+    LOG_INFO("Start loading nrrd file {}", nrrd_file.string());
+    ASSERT(nrrd_file.extension() == getFileExtension());
     destination = NRRD::Image<float>(nrrd_file.string());
-    if (!destination)
-    {
-        std::cout << "Failed to read NRRD image \"" << nrrd_file.string() << "\"" << std::endl;
+    if (!destination) {
+        LOG_ERROR("Failed to read NRRD image {}", nrrd_file.string());
         return -1;
     }
 
-    auto end = std::chrono::steady_clock::now();
-    std::cout << "End loading nrrd file. Took: " << float(std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()) / 1000.f << " seconds." << std::endl;
+    LOG_INFO("End loading nrrd file. Took {}", timer.stop().toString());
 
     return 0;
 }

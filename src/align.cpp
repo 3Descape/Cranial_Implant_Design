@@ -1,6 +1,5 @@
 #include "align.hpp"
 
-#include <iostream>
 #include <string>
 
 #include <pcl/console/print.h>
@@ -21,6 +20,7 @@
 #include "util/util_opengl.hpp"
 #include "util/util_timer.hpp"
 #include "tinyply.hpp"
+#include "logger/logger.hpp"
 #include "opengl_object/Line.hpp"
 #include "opengl_object/Point.hpp"
 #include "util/util_mesh.hpp"
@@ -219,8 +219,6 @@ int align(Skull& target, Skull& source, const ICPSettings& settings, std::vector
                 const pcl::CorrespondencesPtr& correspondences,
                 const float score)
         {
-            std::cout << "Callback, iteration: " << iteration << std::endl;
-
             // TODO: refactor since duplicate code(see below)
             Eigen::Transform<float, 3, Eigen::Affine> transformation(final_transform);
             glm::vec3 rotation_radians;
@@ -262,11 +260,11 @@ int align(Skull& target, Skull& source, const ICPSettings& settings, std::vector
         output_objects.push_back(createCloudVisualization(source_cloud, "Source Cloud"));
 
     if (!icp.hasConverged()) {
-        PCL_ERROR("ICP has not converged.\n");
+        LOG_ERROR("ICP has not converged.");
         return -1;
     }
 
-    std::cout << "Applied ICP in " << timer.stop().toString() << std::endl;
+    LOG_INFO("Applied ICP in {}", timer.stop().toString());
     Eigen::Matrix4f transformation_matrix = icp.getFinalTransformation().cast<float>();
     Eigen::Transform<float, 3, Eigen::Affine> transformation(transformation_matrix);
     glm::vec3 rotation_radians;

@@ -1,7 +1,7 @@
 #include <cstring>
-#include <iostream>
 
 #include "SoA.hpp"
+#include "logger/logger.hpp"
 
 const SoA_Region* SoA_Region_List::get(const char* name)
 {
@@ -11,7 +11,7 @@ const SoA_Region* SoA_Region_List::get(const char* name)
             return &region;
     }
 
-    std::cout << "Error: SoA_Region_List failed to find name \"" << name << "\"" << std::endl;
+    LOG_ERROR("SoA_Region_List failed to find name {}.", name);
 
     return nullptr;
 }
@@ -63,8 +63,7 @@ void SoA_memcpy(void* destination, const std::vector<SoA_Memcpy_Descriptor>& des
             } break;
             default:
             {
-                std::cout << "SoA_Memcpy_Descrptor SrcType not implemented" << std::endl;
-                exit(-1);
+                LOG_ERROR("SoA_Memcpy_Descrptor SrcType not implemented.");
                 break;
             }
         }

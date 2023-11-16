@@ -3,6 +3,7 @@
 
 #include "OpenGLObject.hpp"
 #include "util/util_opengl.hpp"
+#include "logger/logger.hpp"
 #include "Shader.hpp"
 
 
@@ -78,10 +79,11 @@ void OpenGLObject::setVertexAttributeLayoutAoS(const std::vector<AttributeLayout
         entry.data_type == GL_UNSIGNED_INT)
         {
             OPENGL_CHECK(glVertexAttribIPointer(entry.attribute, entry.count, entry.data_type, stride, (void*)offset));
-            std::cout << "Integer Attribute: " << entry.name << std::endl;
+            LOG_INFO("Integer Attribute: {}", entry.name);
         }
-        else
+        else {
             OPENGL_CHECK(glVertexAttribPointer(entry.attribute, entry.count, entry.data_type, entry.normalized, stride, (void*)offset));
+        }
 
         OPENGL_CHECK(glEnableVertexAttribArray(entry.attribute));
         offset += entry.count * entry.data_type_size;
@@ -101,7 +103,7 @@ void OpenGLObject::setVertexAttributeLayoutSoA(const std::vector<AttributeLayout
         entry.data_type == GL_UNSIGNED_INT)
         {
             OPENGL_CHECK(glVertexAttribIPointer(entry.attribute, entry.count, entry.data_type, entry.count * entry.data_type_size, (void*)entry.offset));
-            std::cout << "Integer Attribute: " << entry.name << std::endl;
+            LOG_INFO("Integer Attribute: {}", entry.name);
         }
         else
             OPENGL_CHECK(glVertexAttribPointer(entry.attribute, entry.count, entry.data_type, entry.normalized, entry.count * entry.data_type_size, (void*)entry.offset));
@@ -170,10 +172,8 @@ int OpenGLObject::updateUniforms(const std::map<std::string, UniformValue>& addi
         if(data == nullptr)
         {
             auto val = additional_data.find(entry.name);
-            if(val == additional_data.end())
-            {
-                std::cout << "Error in OpenGLObject::updateUniforms(): Tried to set value for " << entry.name
-                << " but data == nullptr and no additional data was provided!" << std::endl;
+            if(val == additional_data.end()) {
+                LOG_ERROR("OpenGLObject::updateUniforms(): Tried to set value for {} but data == nullptr and no additional data was provided!", entry.name);
                 continue;
             }
 

@@ -1,7 +1,6 @@
 #include <pcl/registration/icp.h>
 #include <pcl/correspondence.h>
 #include <pcl/PCLPointCloud2.h>
-#include <iostream>
 
 template <typename PointSource, typename PointTarget, typename Scalar = float>
 class ICP : public pcl::IterativeClosestPointWithNormals<PointSource, PointTarget, Scalar> {

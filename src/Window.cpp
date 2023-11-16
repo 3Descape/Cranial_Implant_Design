@@ -1,10 +1,9 @@
-#include <iostream>
-
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 #include "Window.hpp"
 #include "util/util_opengl.hpp"
+#include "logger/logger.hpp"
 
 Window::~Window()
 {
@@ -41,9 +40,8 @@ int Window::init(float initial_size)
     window_ = glfwCreateWindow(window_width, window_height, name_.c_str(), NULL, NULL);
     glfwSetWindowMonitor(window_, NULL, window_x, window_y, window_width, window_height, 0);
 
-    if (window_ == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
+    if (window_ == NULL) {
+        LOG_ERROR("Failed to create GLFW window.");
         glfwTerminate();
         return -1;
     }
@@ -60,9 +58,8 @@ int Window::init(float initial_size)
     setSize(window_width, window_height);
     setMonitorSize(mode->width, mode->height);
 
-    if (gladLoadGL(glfwGetProcAddress) == 0)
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
+    if (gladLoadGL(glfwGetProcAddress) == 0) {
+        LOG_ERROR("Failed to initialize GLAD.");
         return -1;
     }
 

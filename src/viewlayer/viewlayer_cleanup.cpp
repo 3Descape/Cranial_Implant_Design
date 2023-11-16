@@ -1,4 +1,3 @@
-#include <iostream>
 #include <algorithm>
 #include <numeric>
 #include <vector>
@@ -33,7 +32,6 @@ void viewlayer_draw_cleanup()
         while(start_index < scores.size() && scores[start_index] == 0) {
             start_index++;
         }
-        // std::cout << "Start index: " << start_index << std::endl;
         valid_count = scores.size() - start_index;
         mean = std::accumulate(scores.begin() + start_index, scores.end(), 0.0f) / valid_count;
         percentile_index = start_index + floor((valid_count - 1) * (percentile_threshold / 100.0f));

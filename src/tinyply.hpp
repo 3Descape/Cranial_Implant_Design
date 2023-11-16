@@ -14,14 +14,15 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
-#include <iostream>
 #include <cstring>
 #include <iterator>
 #include <openvdb/openvdb.h>
 #include <glm/glm.hpp>
 
 #include "tinyply.h"
+#include "logger/logger.hpp"
 #include "util/util_timer.hpp"
+#include "assert.hpp"
 
 using namespace tinyply;
 
@@ -94,8 +95,7 @@ inline void write_ply(const std::string& filename, const std::vector<glm::uvec3>
 
 inline int read_ply(const std::string& filepath, std::vector<glm::vec3>* points_out, std::vector<glm::uvec3>* triangles_out, const bool preload_into_memory = true)
 {
-    std::cout << "..................TINYPLY.................................\n";
-    std::cout << "Now Reading: " << filepath << std::endl;
+    LOG_INFO("TinyPLY: Reading file {}.", filepath);
 
     std::unique_ptr<std::istream> file_stream;
     std::vector<uint8_t> byte_buffer;
@@ -131,18 +131,18 @@ inline int read_ply(const std::string& filepath, std::vector<glm::vec3>* points_
         file.read(*file_stream);
         read_timer.stop();
 
-        std::cout << "\tparsing " << size_mb << "mb in " << read_timer.toString() << " [" << (size_mb / read_timer.seconds()) << " MBps]" << std::endl;
+        LOG_INFO("\tparsing {} mb in {} [{} MBps]", size_mb, read_timer.toString(), size_mb / read_timer.seconds());
 
         if(vertices)
         {
-            std::cout << "\tRead " << vertices->count  << " total vertices"<< std::endl;
+            LOG_INFO("\tRead {} total vertices.", vertices->count);
             points_out->resize(vertices->count);
             std::memcpy(points_out->data(), vertices->buffer.get(), vertices->buffer.size_bytes());
         }
 
         if(triangles)
         {
-            std::cout << "\tRead " << triangles->count     << " total triangles" << std::endl;
+            LOG_INFO("\tRead {} total triangles.", triangles->count);
             triangles_out->resize(triangles->count);
             std::memcpy(triangles_out->data(), triangles->buffer.get(), triangles->buffer.size_bytes());
         }
@@ -158,8 +158,7 @@ inline int read_ply(const std::string& filepath, std::vector<glm::vec3>* points_
 
 inline void read_blender_ply(const std::string& filepath, std::vector<glm::vec3>& points_out, std::vector<glm::uvec3>& indices_out, std::vector<glm::vec4>& colors_out, std::vector<glm::vec3>& normals_out, const bool preload_into_memory = true)
 {
-    std::cout << "..................TINYPLY.................................\n";
-    std::cout << "Now Reading: " << filepath << std::endl;
+    LOG_INFO("TinyPLY: Reading file {}", filepath);
 
     std::unique_ptr<std::istream> file_stream;
     std::vector<uint8_t> byte_buffer;
@@ -205,9 +204,9 @@ inline void read_blender_ply(const std::string& filepath, std::vector<glm::vec3>
 
         file.read(*file_stream);
 
-        assert(vertices->t == tinyply::Type::FLOAT32);
-        assert(normals->t == tinyply::Type::FLOAT32);
-        assert(colors->t == tinyply::Type::UINT8);
+        ASSERT(vertices->t == tinyply::Type::FLOAT32);
+        ASSERT(normals->t == tinyply::Type::FLOAT32);
+        ASSERT(colors->t == tinyply::Type::UINT8);
 
         const size_t numFacesBytes = faces->buffer.size_bytes();
         indices_out.resize(faces->count);

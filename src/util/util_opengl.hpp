@@ -2,17 +2,23 @@
 #include <intrin.h>
 #include <glad/gl.h>
 #include <glm/glm.hpp>
+#include "logger/logger.hpp"
 
 #ifndef UTIL_OPENGL
 #define UTIL_OPENGL
 
-#ifdef DEBUG_BUILD
-#define OPENGL_CHECK(X) X; {GLenum err; \
-while((err = glGetError()) != GL_NO_ERROR) { \
-    std::cout << "GLERROR: " << __FILE__ << ", " << __LINE__ << ", Error: " << std::hex << err << std::dec << std::endl; __debugbreak(); }}
+const std::string opengl_transalte_error_code(GLuint code);
+
+#ifdef DEBUG
+#define OPENGL_CHECK(X) \
+    X; { \
+    GLenum err; \
+    while((err = glGetError()) != GL_NO_ERROR) { \
+    LOG_ERROR("OpenGL error: {}({:#x}), File: {}:{}", opengl_transalte_error_code(err), err, __FILE__, __LINE__); \
+    }}
 #else
 #define OPENGL_CHECK(X) X
-#endif // DEBUG_BUILD
+#endif
 
 inline glm::mat4 xyzToxzy(const glm::mat4& matrix)
 {

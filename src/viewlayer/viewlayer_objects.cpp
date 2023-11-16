@@ -8,6 +8,7 @@
 #include "scene_object/SequenceLineObject.hpp"
 #include "resource/NrrdResource.hpp"
 #include "util/util_timer.hpp"
+#include "logger/logger.hpp"
 
 void viewlayer_draw_objects()
 {
@@ -107,7 +108,7 @@ void viewlayer_draw_objects()
         boost::filesystem::path default_path = NrrdResource::getRootDirectory() / "defective_skull";
         ui_file_dialog_select_multiple(selected_files, default_path.string(), filterItem, 1);
         app.addNrrdObjects(selected_files);
-        std::cout << "Loading all skull took " << timer.stop().toString() << std::endl;
+        LOG_INFO("Loading all skull took {}", timer.stop().toString());
     }
 
     bool object_selected = app.selected_object_index != -1;

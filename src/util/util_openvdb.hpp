@@ -6,6 +6,8 @@
 #include "scene_object/SceneObject.hpp"
 #include "SoA.hpp"
 #include "util/util_timer.hpp"
+#include "logger/logger.hpp"
+#include "assert.hpp"
 
 #ifndef UTIL_OPENVDB
 #define UTIL_OPENVDB
@@ -102,18 +104,18 @@ inline SoA_Region_List openvdb_create_node_tree_wireframe_visualization(const op
         indices.emplace_back(point_indexes[3], point_indexes[7]);
     }
 
-    std::cout << "N: " << points.size() << std::endl;
+    LOG_INFO("N: {}", points.size());
 
     std::vector<SoA_Memcpy_Descriptor> descriptors = {
         { { "position", sizeof(points[0]), points.size() }, SoA_Memcpy_Descriptor::ARRAY,  (void*)points.data() },
         { { "level", sizeof(levels[0]), levels.size() }, SoA_Memcpy_Descriptor::ARRAY, (void*)levels.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
     out_data.resize(SoA_get_size_bytes(descriptors) / sizeof(float));
     SoA_memcpy(out_data.data(), descriptors);
 
-    std::cout << "Create Grid Tree Wireframe took " << timer.stop().toString() << std::endl;
+    LOG_INFO("Create Grid Tree Wireframe took {}", timer.stop().toString());
 
     return SoA_create_region_list(descriptors);
 }

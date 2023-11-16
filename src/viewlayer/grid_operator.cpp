@@ -19,7 +19,6 @@ std::vector<openvdb::FloatGrid::Ptr> grid_operator_execute_all(std::vector<GridO
     for(GridOperator* grid_operator : grid_operations) {
         grid_operator->execute();
         grid_operator->has_data = true;
-        std::cout << "Executed operator" << std::endl;
     }
 
     return *grids_ptr;

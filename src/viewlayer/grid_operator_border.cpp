@@ -6,7 +6,9 @@
 #include <openvdb/tools/LevelSetFilter.h>
 #include <openvdb/tools/LevelSetRebuild.h>
 #include <openvdb/tools/Mask.h>
+
 #include "application.hpp"
+#include "logger/logger.hpp"
 
 GridOperatorBorder::GridOperatorBorder()
     : GridOperator(GridOperator_Border) {}
@@ -65,7 +67,7 @@ void GridOperatorBorder::execute() {
                 else
                     filter.meanCurvature();
             } else {
-                std::cout << "GridOperator LevelSetFilter unsupported type" << std::endl;
+                LOG_ERROR("GridOperator LevelSetFilter unsupported type.");
                 exit(-1);
             }
         }

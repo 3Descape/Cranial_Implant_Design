@@ -1,6 +1,6 @@
 #include "Resource.hpp"
+#include "logger/logger.hpp"
 
-#include <iostream>
 
 std::optional<boost::filesystem::path> Resource::data_root_dir_;
 std::optional<boost::filesystem::path> Resource::cache_root_dir_;
@@ -39,7 +39,7 @@ int Resource::setDataRootDirectory(std::optional<std::string> new_path)
     settings.close();
 
     if(!boost::filesystem::exists(data_root_dir_in)) {
-        std::cout << "Data root directory \"" << data_root_dir_in << "\" does not exist." << std::endl;
+        LOG_WARN("Data root directory {} does not excist.", data_root_dir_in);
         return -1;
     }
 
@@ -50,9 +50,8 @@ int Resource::setDataRootDirectory(std::optional<std::string> new_path)
 
 int Resource::setCacheRootDirectory(const boost::filesystem::path& cache_root_dir)
 {
-  if (!boost::filesystem::exists(cache_root_dir))
-  {
-    std::cout << "Root directory \"" << cache_root_dir.string() << "\" does not exist." << std::endl;
+  if (!boost::filesystem::exists(cache_root_dir)) {
+    LOG_WARN("Root directory {} does not exist.", cache_root_dir.string());
     return -1;
   }
 
@@ -72,11 +71,9 @@ boost::filesystem::path Resource::getDataRootDirectory()
 
 int Resource::createDirectoryIfNecessary(const boost::filesystem::path& directory)
 {
-    if(!boost::filesystem::exists(directory))
-    {
-        if(!boost::filesystem::create_directories(directory))
-        {
-            std::cout << "Error creating directories: \"" << directory.string() << "\"" << std::endl;
+    if(!boost::filesystem::exists(directory)) {
+        if(!boost::filesystem::create_directories(directory)) {
+            LOG_ERROR("Failed to create directory {}", directory.string());
             return -1;
         }
     }

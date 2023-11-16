@@ -2,6 +2,7 @@ target_sources(${PROJECT_NAME} PRIVATE
     util_color.hpp
     util_mesh.hpp
     util_opengl.hpp
+    util_opengl.cpp
     util_openvdb.hpp
     util_path.hpp
     util_primitives.hpp

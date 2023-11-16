@@ -1,6 +1,5 @@
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 #include <cmath>
 #include <pcl/point_types.h>
 

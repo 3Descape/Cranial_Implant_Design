@@ -11,7 +11,7 @@ inline SoA_Region_List SoA_mesh_from_position(const std::vector<glm::vec3>& poin
         { { "position", sizeof(points[0]), points.size() }, SoA_Memcpy_Descriptor::ARRAY,  (void*)points.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
 
     return SoA_create_region_list(descriptors);
 }
@@ -24,7 +24,7 @@ inline SoA_Region_List SoA_mesh_from_position_color4_normal(const std::vector<gl
         { { "normal", sizeof(normals[0]), normals.size() }, SoA_Memcpy_Descriptor::ARRAY, (void*)normals.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
     out_data.resize(SoA_get_size_bytes(descriptors) / sizeof(float));
     SoA_memcpy(out_data.data(), descriptors);
 
@@ -90,7 +90,7 @@ inline SoA_Region_List SoA_mesh_from_position_const_color4_with_flat_normal(cons
         { { "normal", sizeof(_normals[0]), _normals.size() }, SoA_Memcpy_Descriptor::ARRAY, _normals.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
     out_data.resize(SoA_get_size_bytes(descriptors) / sizeof(float));
     SoA_memcpy(out_data.data(), descriptors);
 
@@ -105,7 +105,7 @@ inline SoA_Region_List SoA_mesh_from_position_normals_const_color4(const std::ve
         { { "normal", sizeof(normals[0]), normals.size() }, SoA_Memcpy_Descriptor::ARRAY, (void*)normals.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
     out_data.resize(SoA_get_size_bytes(descriptors) / sizeof(float));
     SoA_memcpy(out_data.data(), descriptors);
 
@@ -122,7 +122,7 @@ inline SoA_Region_List SoA_mesh_from_position_with_flat_normal(const std::vector
         { { "normal", sizeof(_normals[0]), _normals.size() }, SoA_Memcpy_Descriptor::ARRAY, _normals.data() },
     };
 
-    assert(SoA_get_size_bytes(descriptors) % sizeof(float) == 0 && "Remainder was not 0.");
+    ASSERT_MSG_DEBUG(SoA_get_size_bytes(descriptors) % sizeof(float) == 0, "Remainder was not 0.");
     out_data.resize(SoA_get_size_bytes(descriptors) / sizeof(float));
     SoA_memcpy(out_data.data(), descriptors);
 

@@ -10,6 +10,7 @@
 #include "UISettings.hpp"
 #include "util/util_mesh.hpp"
 #include "align.hpp"
+#include "logger/logger.hpp"
 
 void viewlayer_draw_align()
 {
@@ -199,7 +200,7 @@ void viewlayer_draw_align()
             for(auto& thread : threads)
                 thread.join();
 
-            std::cout << "Alignment took: " << timer.stop().toString() << std::endl;
+            LOG_INFO("Alignment took: {}", timer.stop().toString());
             for(auto& vector : new_objects)
                 for(auto object : vector)
                     app.addSceneObject(object);

@@ -39,9 +39,9 @@ typedef struct Viewport
 
         // ImVec2 mouse_pos = ImGui::GetMousePos();
         // ImVec2 mouse_relative_position = ImVec2(mouse_pos.x - content_area_start.x, mouse_pos.y - content_area_start.y);
-        // std::cout << "Min: Window: " << window_min.x << ", " << window_min.y << ",  Cursor: " << cursor_pos.x << ", " << cursor_pos.y << std::endl;
-        // std::cout << "Max: Window: " << window_max.x << ", " << window_max.y << std::endl;
-        // std::cout << "Mouse      : " << mouse_relative_position.x << ", " <<  mouse_relative_position.y << std::endl;
+        // LOG_INFO("Window Min: x: {}, y: {}, Cursor: x: {}, y: {}", window_min.x, window_min.y, cursor_pos.x, cursor_pos.y);
+        // LOG_INFO("Window Max: x: {}, y: {}", window_max.x, window_max.y);
+        // LOG_INFO("Mouse relative: x: {}, y: {}", mouse_relative_position.x, mouse_relative_position.y);
     }
 
     void drawFullScreenImage(ImTextureID texture, int resolution_x, int resolution_y) const

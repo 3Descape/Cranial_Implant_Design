@@ -1,4 +1,3 @@
-#include <iostream>
 #include <thread>
 #include <cstdint>
 #include <iterator>
@@ -29,6 +28,7 @@
 #include "util/util_opengl.hpp"
 #include "util/util_mesh.hpp"
 #include "util/util_openvdb.hpp"
+#include "assert.hpp"
 
 Application app;
 
@@ -144,8 +144,8 @@ void Application::drawUI()
     viewlayer_draw_cleanup();
 
      // TODO: BACKBUFFER remove fixed size limitation
-    assert(viewport_.content_size.x <= 1920 && "Exceeted max viewport width");
-    assert(viewport_.content_size.y <= 1080 && "Exceeted max viewport height");
+    ASSERT_MSG(viewport_.content_size.x <= 1920, "Exceeded max viewport width.");
+    ASSERT_MSG(viewport_.content_size.y <= 1080, "Exceeded max viewport height.");
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     viewport_.begin();
@@ -242,8 +242,9 @@ std::vector<SceneObject*> Application::getAlignSources() const
 
 void Application::drawScene()
 {
-    if(viewport_.content_size.x == 0 && viewport_.content_size.y == 0)
+    if(viewport_.content_size.x == 0 && viewport_.content_size.y == 0) {
         return;
+    }
 
     OPENGL_CHECK(glEnable(GL_BLEND));
     OPENGL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -260,8 +261,7 @@ void Application::drawScene()
     glm::mat4 projection = camera_.getProjection(viewport_.content_size.x / viewport_.content_size.y);
 
     scene_objects_lock.lock();
-    for(auto scene_object : scene_objects)
-    {
+    for(auto scene_object : scene_objects) {
         if(!scene_object->isVisible() || scene_object->getType() == SceneObject::AREA_PICKER) continue;
         scene_object->draw(view, projection);
     }
@@ -272,8 +272,7 @@ void Application::drawScene()
 
     // scene ray picking
     Skull* target = getTargetObject();
-    if((target != nullptr) && ctrl_pressed)
-    {
+    if((target != nullptr) && ctrl_pressed) {
         float x, y;
         viewport_.getNormalizedCursorPosition(x, y);
         glm::vec3 cursor_pos = viewToWorldSpace(x, y, camera_.getProjection(viewport_.content_size.x / viewport_.content_size.y) * camera_.getLookAt());
@@ -289,18 +288,15 @@ void Application::drawScene()
 
     bool mouse_capture_intersection = false;
     IntersectionPointObject obj;
-    for(size_t i = 0; i < user_selection.size(); ++i)
-    {
+    for(size_t i = 0; i < user_selection.size(); ++i) {
         auto& selection = user_selection[i];
         obj.setHighlight(false);
 
-        if(glm::length(selection.point - intersection.point) <= 0.5f && ctrl_pressed)
-        {
+        if(glm::length(selection.point - intersection.point) <= 0.5f && ctrl_pressed) {
             mouse_capture_intersection = true;
             obj.setHighlight(true);
-            if(old_state_rmb == GLFW_PRESS && new_state_rmb == GLFW_RELEASE)
-            {
-                std::cout << "Remove point" << std::endl;
+            if(old_state_rmb == GLFW_PRESS && new_state_rmb == GLFW_RELEASE) {
+                LOG_INFO("Removed point.");
                 user_selection.erase(user_selection.begin() + i);
                 i--;
                 continue;
@@ -326,9 +322,8 @@ void Application::drawScene()
         obj.updateModelMatrix();
         obj.draw(view, projection);
 
-        if(old_state_lmb == GLFW_PRESS && new_state_lmb == GLFW_RELEASE)
-        {
-            std::cout << "added point at x: " << intersection.point.x << ", y: " << intersection.point.y << ", z: " << intersection.point.z  << std::endl;
+        if(old_state_lmb == GLFW_PRESS && new_state_lmb == GLFW_RELEASE) {
+            LOG_INFO("Added point at x: {}, y: {}, z: {}", intersection.point.x, intersection.point.y, intersection.point.z);
             user_selection.push_back(intersection);
         }
     }

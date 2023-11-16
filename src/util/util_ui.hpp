@@ -1,10 +1,10 @@
 
 #include <vector>
-#include <iostream>
 #include <boost/filesystem.hpp>
 
 #include <nfd.h>
 #include "imgui/imgui.h"
+#include "logger/logger.hpp"
 
 
 #ifndef UTIL_UI
@@ -17,16 +17,15 @@ inline int ui_file_dialog_single_select(boost::filesystem::path& output_path, co
 
     if (result == NFD_CANCEL)
     {
-        std::cout << "NFD: User pressed cancel." << std::endl;
+        LOG_INFO("NFD: User pressed cancel.");
         return NFD_CANCEL;
     }
     else if(result == NFD_ERROR)
     {
-        std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+        LOG_ERROR("NFD: {}", NFD_GetError());
         return NFD_ERROR;
     }
 
-    std::cout << "Path: " << path << std::endl;
     output_path = boost::filesystem::path(path);
     NFD_FreePath(path);
 
@@ -38,14 +37,11 @@ inline int ui_file_dialog_select_multiple(std::vector<boost::filesystem::path>& 
     const nfdpathset_t* outPaths;
     nfdresult_t result = NFD_OpenDialogMultiple(&outPaths, filterItem, filterCount, default_path.empty() ? nullptr : default_path.c_str());
 
-    if (result == NFD_CANCEL)
-    {
-        std::cout << "NFD: User pressed cancel." << std::endl;
+    if (result == NFD_CANCEL) {
         return NFD_CANCEL;
     }
-    else if(result == NFD_ERROR)
-    {
-        std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+    else if(result == NFD_ERROR) {
+        LOG_ERROR("NFD: {}", NFD_GetError());
         return NFD_ERROR;
     }
 
@@ -53,9 +49,7 @@ inline int ui_file_dialog_select_multiple(std::vector<boost::filesystem::path>& 
     nfdchar_t* path;
     nfdpathsetenum_t enumerator;
     NFD_PathSet_GetEnum(outPaths, &enumerator);
-    while (NFD_PathSet_EnumNext(&enumerator, &path) && path)
-    {
-        std::cout << "Path " << i++ << ": " << path << std::endl;
+    while (NFD_PathSet_EnumNext(&enumerator, &path) && path) {
         output_paths.push_back(boost::filesystem::path(path));
         NFD_PathSet_FreePath(path);
     }
@@ -71,14 +65,11 @@ inline int ui_file_dialog_save(boost::filesystem::path& output_path, const std::
     nfdchar_t* path = NULL;
     nfdresult_t result = NFD_SaveDialog(&path, filterItem, filterCount, default_path.empty() ? nullptr : default_path.c_str(), default_name.empty() ? nullptr : default_name.c_str());
 
-    if (result == NFD_CANCEL)
-    {
-        std::cout << "NFD: User pressed cancel." << std::endl;
+    if (result == NFD_CANCEL) {
         return NFD_CANCEL;
     }
-    else if(result == NFD_ERROR)
-    {
-        std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+    else if(result == NFD_ERROR) {
+        LOG_ERROR("NFD: {}", NFD_GetError());
         return NFD_ERROR;
     }
 
@@ -93,18 +84,15 @@ inline int ui_file_dialog_folder_select(boost::filesystem::path& output_path, co
     nfdchar_t* path = NULL;
     nfdresult_t result = NFD_PickFolder(&path, default_path.empty() ? nullptr : default_path.c_str());
 
-    if (result == NFD_CANCEL)
-    {
-        std::cout << "NFD: User pressed cancel." << std::endl;
+    if (result == NFD_CANCEL) {
         return NFD_CANCEL;
     }
     else if(result == NFD_ERROR)
     {
-        std::cout << "NFD Error: " << NFD_GetError() << std::endl;
+        LOG_ERROR("NFD: {}", NFD_GetError());
         return NFD_ERROR;
     }
 
-    std::cout << "Path: " << path << std::endl;
     output_path = boost::filesystem::path(path);
     NFD_FreePath(path);
 

@@ -1,4 +1,4 @@
-#include <iostream>
+#include "logger/logger.hpp"
 
 #ifndef UTIL_COLOR_H
 #define UTIL_COLOR_H
@@ -7,7 +7,7 @@ inline glm::vec3 hsv_to_rgb(float H, float S, float V)
 {
     if(H > 360 || H < 0 || S > 100 || S < 0 || V > 100 || V < 0)
     {
-        std::cout << "The givem HSV values are not in valid range" << std::endl;
+        LOG_WARN("The givem HSV values are not in valid range");
         return glm::vec3(0);
     }
 

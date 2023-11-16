@@ -1,6 +1,7 @@
 #include<vector>
 #include "SceneObject.hpp"
 #include "opengl_object/Line.hpp"
+#include "assert.hpp"
 
 #ifndef SEQUENCE_LINE_OBJECT_H
 #define SEQUENCE_LINE_OBJECT_H
@@ -38,7 +39,7 @@ class SequenceLineObject : public SceneObject
 
         void setSequenceIndex(size_t index)
         {
-            assert(lines_.size() > 0);
+            ASSERT(lines_.size() > 0);
 
             if(index < 0) index = 0;
             if(index >= lines_.size()) index = lines_.size() - 1;
@@ -62,7 +63,7 @@ class SequenceLineObject : public SceneObject
 
         Line* getLine()
         {
-            assert(lines_.size() > 0);
+            ASSERT(lines_.size() > 0);
             return lines_[sequence_index_];
         }
 

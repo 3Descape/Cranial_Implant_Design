@@ -15,6 +15,8 @@
 #include "TransformResource.hpp"
 #include "util/util_timer.hpp"
 #include "util/util_path.hpp"
+#include "logger/logger.hpp"
+#include "assert.hpp"
 
 OpenvdbResource::Type OpenvdbResource::type_ = OpenvdbResource::CACHED;
 
@@ -46,13 +48,13 @@ int OpenvdbResource::cache(openvdb::FloatGrid::Ptr* output_openvdb_grid, bool fo
         return 0;
 
     Timer timer;
-    std::cout << "Start caching openvdb file \"" << getAbsoluteFilePath().string() <<  "\"" << std::endl;
+    LOG_INFO("Start caching openvdb file {}", getAbsoluteFilePath().string());
 
     NrrdResource nrrd_resource(*this);
     NRRD::Image<float> image;
     if(int code = nrrd_resource.load(image)) return code;
 
-    assert(image.dimension() == 3 && "NRRD image has not dimension == 3.");
+    ASSERT_MSG(image.dimension() == 3, "NRRD image has not dimension == 3.");
 
     openvdb::FloatGrid::Ptr grid = openvdb::FloatGrid::create(1.0);
     openvdb::FloatGrid::Accessor accessor = grid->getAccessor();
@@ -103,7 +105,7 @@ int OpenvdbResource::cache(openvdb::FloatGrid::Ptr* output_openvdb_grid, bool fo
     file.write(grids_container);
     file.close();
 
-    std::cout << "Cached OpenVDB file in " << timer.stop().toString() << std::endl;
+    LOG_INFO("Cached OpenVDB file in {}", timer.stop().toString());
 
     if(output_openvdb_grid != nullptr)
         *output_openvdb_grid = grid;
@@ -116,7 +118,7 @@ int OpenvdbResource::load(openvdb::FloatGrid::Ptr* grid) const
     if(!exists())
         return cache(grid);
 
-    std::cout << "Loading: " << getAbsoluteFilePath().string() << std::endl;
+    LOG_INFO("Loading {}", getAbsoluteFilePath().string());
 
     try
     {
@@ -132,9 +134,8 @@ int OpenvdbResource::load(openvdb::FloatGrid::Ptr* grid) const
         }
         else if(file.beginName() != file.endName()) // fallback, if there is at least one grid, take the first
         {
-            for (openvdb::io::File::NameIterator iter(file.beginName()); iter != file.endName(); ++iter)
-            {
-                std::cout << "Grid: " << *iter << std::endl;
+            for (openvdb::io::File::NameIterator iter(file.beginName()); iter != file.endName(); ++iter) {
+                LOG_INFO("Grid: {}", *iter);
             }
             openvdb::GridBase::Ptr baseGrid = file.readGrid(*file.beginName());
             baseGrid->setName(getGridName());
@@ -156,12 +157,12 @@ int OpenvdbResource::load(openvdb::FloatGrid::Ptr* grid) const
     }
     catch (const std::length_error& e)
     {
-        std::cout << e.what() << " : This most likely happened because using a release build of OpenVDB in debug mode!!!" << std::endl;
+        LOG_ERROR("{} : This most likely happened because using a release build of OpenVDB in debug mode!!!", e.what());
         exit(-1);
     }
     catch(const std::exception& e)
     {
-        std::cout << "Openvdb read grid exception occured: " << e.what() << std::endl;
+        LOG_WARN("Openvdb read grid exception occured: {}", e.what());
         return cache(grid, true);
     }
 
